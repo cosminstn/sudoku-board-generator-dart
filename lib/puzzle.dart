@@ -1,13 +1,9 @@
-import 'package:sudoku_board_generator_dart/primitive_wrapper.dart';
-
-import 'models/board.dart';
 import 'dart:math';
 
-int calculate() {
-  return 6 * 7;
-}
+import 'models/board.dart';
+import 'primitive_wrapper.dart';
 
-///Checks if the generated board is final, i.e. there are no zeroes left on the board.
+///Checks if the generated board is completed, i.e. there are no zeroes left on the board.
 bool checkBoard(Board board) {
   for (var row in board.matrix) {
     for (var number in row) {
@@ -19,19 +15,20 @@ bool checkBoard(Board board) {
   return true;
 }
 
-Board generateBoard() {
+///Generates the board with no elements removed (the solution).
+Board _generateFilledBoard() {
   final board = Board.empty();
 
   // while (!checkBoard(board) && attempts < MAX_ATTEMPTS) {}
   var startTime = DateTime.now();
-  fill(board);
+  _fill(board);
   var endTime = DateTime.now();
   print(
       'Generation took ${endTime.difference(startTime).inMilliseconds} millis');
   return board;
 }
 
-bool fill(Board board, {int lastRow = 0, int lastCol = 0}) {
+bool _fill(Board board, {int lastRow = 0, int lastCol = 0}) {
   // if (attempts > 0) {
   //   print('Optimal solution not found yet, attempts: ${attempts}');
   // }
@@ -60,7 +57,7 @@ bool fill(Board board, {int lastRow = 0, int lastCol = 0}) {
       if (checkBoard(board)) {
         return true;
       }
-      if (fill(board, lastRow: row, lastCol: col)) {
+      if (_fill(board, lastRow: row, lastCol: col)) {
         return true;
       }
     }
@@ -114,7 +111,7 @@ bool solve(Board board, PrimitiveWrapper counter,
 /// Removes elements from the filled board, generating a single solution puzzle.
 /// [attempts] - The bigger this number is the more chance that the number of clues left approaces 17.
 ///              However, if this parameter is to big than the runtime will certainly be affected.
-void puzzle(Board board, {attempts = 500}) {
+Future<void> _puzzle(Board board, {attempts = 500}) async {
   assert(board != null);
   assert(attempts > 0);
 
@@ -146,4 +143,11 @@ void puzzle(Board board, {attempts = 500}) {
       attempts -= 1;
     }
   }
+}
+
+Future<Board> generate() async {
+  final board = _generateFilledBoard();
+  await _puzzle(board);
+
+  return board;
 }

@@ -1,21 +1,9 @@
-import 'package:sudoku_board_generator_dart/board_generator.dart'
-    as board_generator;
+import 'package:sudoku_board_generator_dart/puzzle.dart' as board_generator;
 
-void main(List<String> arguments) {
-  var board = board_generator.generateBoard();
-
+Future<void> main(List<String> arguments) async {
   var startTime = DateTime.now();
+  var board = await board_generator.generate();
 
-  print('Board: ');
-  for (var row in board.matrix) {
-    var line = '';
-    for (var number in row) {
-      line += '${number} ';
-    }
-    print(line);
-  }
-
-  board_generator.puzzle(board);
   print('Puzzled board:');
   board.printBoard();
   print('Clues ${board.getNoClues()}');

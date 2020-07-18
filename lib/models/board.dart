@@ -1,7 +1,5 @@
-/**
- * The board is a 9 by 9 matrix containing values from 1 to 9. 
- * If a position is considered empty then it will contain the value 0.
- */
+/// The board is a 9 by 9 matrix containing values from 1 to 9.
+/// If a position is considered empty then it will contain the value 0.
 class Board {
   // TODO: Readonly access to this data structure
   List<List<int>> matrix;
