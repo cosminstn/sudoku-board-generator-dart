@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'models/board.dart';
-import 'primitive_wrapper.dart';
+import 'models/primitive_wrapper.dart';
 
 ///Checks if the generated board is completed, i.e. there are no zeroes left on the board.
 bool checkBoard(Board board) {
@@ -111,14 +111,20 @@ bool solve(Board board, PrimitiveWrapper counter,
 /// Removes elements from the filled board, generating a single solution puzzle.
 /// [attempts] - The bigger this number is the more chance that the number of clues left approaces 17.
 ///              However, if this parameter is to big than the runtime will certainly be affected.
-Future<void> _puzzle(Board board, {attempts = 500}) async {
+/// [maxTimeMillis] - It is not guaranteed that the algorithm will finish in this time, but should be really close to it.
+Future<void> _puzzle(Board board,
+    {attempts = 500, maxTimeMillis = 1000}) async {
   assert(board != null);
   assert(attempts > 0);
 
   final rnd = Random();
   // Hard stop at 17 clues.
   // Any less than that and we can't guarantee that the board will have a single solution.
-  while (attempts > 0 && board.getNoClues() > 17) {
+  final startTime = DateTime.now();
+  var passedMillis = 0;
+  while (attempts > 0 &&
+      board.getNoClues() > 17 &&
+      passedMillis <= maxTimeMillis) {
     // Select a random cell that is not already empty to be cleared
     var row = rnd.nextInt(9);
     var col = rnd.nextInt(9);
@@ -142,12 +148,16 @@ Future<void> _puzzle(Board board, {attempts = 500}) async {
       // We could stop here, but we can also have another attempt with a different cell just to try to remove more numbers
       attempts -= 1;
     }
+    passedMillis = DateTime.now().difference(startTime).inMilliseconds;
   }
 }
 
-Future<Board> generate() async {
+/// [attempts] - The bigger this number is the more chance that the number of clues left approaces 17.
+///              However, if this parameter is to big than the runtime will certainly be affected.
+/// [maxTimeMillis] - It is not guaranteed that the algorithm will finish in this time, but should be really close to it.
+Future<Board> generate({attempts = 500, maxTimeMillis = 1000}) async {
   final board = _generateFilledBoard();
-  await _puzzle(board);
+  await _puzzle(board, attempts: attempts, maxTimeMillis: maxTimeMillis);
 
   return board;
 }
