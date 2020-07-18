@@ -3,8 +3,10 @@
  * If a position is considered empty then it will contain the value 0.
  */
 class Board {
+  // TODO: Readonly access to this data structure
   List<List<int>> matrix;
 
+  // TODO: Verificare dimensiuni matrice, daca nu e 9x9 aruncam eroare
   Board(this.matrix);
 
   ///Initializes a 9x9 board with 0 all over.
@@ -34,6 +36,40 @@ class Board {
 
   Region getRegion(int row, int col) {
     return Region(this, row - (row % 3), col - (col % 3));
+  }
+
+  int getNoClues() {
+    var clues = 0;
+    for (var row in matrix) {
+      for (var el in row) {
+        if (el != 0) {
+          clues++;
+        }
+      }
+    }
+    return clues;
+  }
+
+  void printBoard() {
+    for (var row in matrix) {
+      var line = '';
+      for (var number in row) {
+        line += '${number} ';
+      }
+      print(line);
+    }
+  }
+
+  Board clone() {
+    var clone = Board.empty();
+
+    for (var i = 0; i < 9; i++) {
+      for (var j = 0; j < 9; j++) {
+        clone.matrix[i][j] = matrix[i][j];
+      }
+    }
+
+    return clone;
   }
 }
 

@@ -4,6 +4,8 @@ import 'package:sudoku_board_generator_dart/board_generator.dart'
 void main(List<String> arguments) {
   var board = board_generator.generateBoard();
 
+  var startTime = DateTime.now();
+
   print('Board: ');
   for (var row in board.matrix) {
     var line = '';
@@ -12,4 +14,13 @@ void main(List<String> arguments) {
     }
     print(line);
   }
+
+  board_generator.puzzle(board);
+  print('Puzzled board:');
+  board.printBoard();
+  print('Clues ${board.getNoClues()}');
+
+  var endTime = DateTime.now();
+  print(
+      'Generation took ${endTime.difference(startTime).inMilliseconds} millis');
 }
