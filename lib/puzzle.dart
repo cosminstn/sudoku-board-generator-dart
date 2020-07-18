@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'models/board.dart';
+import 'models/game.dart';
 import 'models/primitive_wrapper.dart';
 
 ///Checks if the generated board is completed, i.e. there are no zeroes left on the board.
@@ -19,12 +20,8 @@ bool checkBoard(Board board) {
 Board _generateFilledBoard() {
   final board = Board.empty();
 
-  // while (!checkBoard(board) && attempts < MAX_ATTEMPTS) {}
-  var startTime = DateTime.now();
   _fill(board);
-  var endTime = DateTime.now();
-  print(
-      'Generation took ${endTime.difference(startTime).inMilliseconds} millis');
+
   return board;
 }
 
@@ -155,9 +152,10 @@ Future<void> _puzzle(Board board,
 /// [attempts] - The bigger this number is the more chance that the number of clues left approaces 17.
 ///              However, if this parameter is to big than the runtime will certainly be affected.
 /// [maxTimeMillis] - It is not guaranteed that the algorithm will finish in this time, but should be really close to it.
-Future<Board> generate({attempts = 500, maxTimeMillis = 1000}) async {
+Future<Game> generate({attempts = 500, maxTimeMillis = 1000}) async {
   final board = _generateFilledBoard();
+  final solution = board.clone();
   await _puzzle(board, attempts: attempts, maxTimeMillis: maxTimeMillis);
 
-  return board;
+  return Game(board, solution);
 }
